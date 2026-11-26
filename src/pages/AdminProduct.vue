@@ -55,6 +55,32 @@ const getData = async () => {
 onMounted(()=>{
     getData();
 });
+
+const deleteProduct = async (id) => {
+    const deleteConfirm = confirm("Bạn có muốn xoá sản phẩm không?");
+    // TH chọn không sẽ không làm gì tiếp theo
+    if(!deleteConfirm) return;
+
+    try{
+        // Để xoá một đối tượng sẽ sử dụng API Endpoint
+        // url http://localhost:3000/products/:id method DELETE
+        const responseData = await axios({
+            method: 'DELETE',
+            url: `http://localhost:3000/products/${id}`
+        });
+
+        // Xoá status trả về 204
+        console.log(responseData.status)
+        if(responseData.status == 200){
+            alert("Xoá sản phẩm thành công");
+            getData();
+        }else{
+            alert("Xoá sản phẩm thất bại. Vui lòng thực hiện lại!");
+        }
+    }catch(e){
+        console.error(e);
+    }
+}
 </script>
 
 <template>
@@ -63,12 +89,13 @@ onMounted(()=>{
         <table class="table">
             <thead>
                 <tr>
-                <th scope="col">STT</th>
-                <th scope="col">ID</th>
-                <th scope="col">Tên</th>
-                <th scope="col">Giá</th>
-                <th scope="col">Số lượng</th>
-                <th scope="col">Hình ảnh</th>
+                    <th scope="col">STT</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Tên</th>
+                    <th scope="col">Giá</th>
+                    <th scope="col">Số lượng</th>
+                    <th scope="col">Hình ảnh</th>
+                    <th scope="col">Hành động</th>
                 </tr>
             </thead>
             <tbody>
@@ -80,6 +107,9 @@ onMounted(()=>{
                     <td>{{ item.quantity }}</td>
                     <td>
                         <img :src="item.image" :style="{width: '100px', height: '100px'}"/>
+                    </td>
+                    <td>
+                        <button @click="deleteProduct(item.id)" class="btn btn-danger">Xoá</button>
                     </td>
                 </tr>
             </tbody>
